@@ -1,3 +1,5 @@
+require "input"
+
 MOAI_CLOUD_URL = "http://services.moaicloud.com/colond/clouddbtutorial"
 
 MOAISim.openWindow( "Textboxes", 320, 480 )
@@ -43,7 +45,7 @@ textbox = MOAITextBox.new ()
 --textbox:setString ( text )
 textbox:setFont ( font )
 textbox:setTextSize ( 16 )
-textbox:setRect ( -150, -230, 150, 230 )
+textbox:setRect ( -150, -430, 150, 30 )
 textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY )
 textbox:setYFlip ( true )
 layer:insertProp ( textbox )
@@ -64,3 +66,18 @@ task:setCallback( taskCallback )
 url = UrlEncode( { name = InputName } )
 print( url )
 task:httpGet( MOAI_CLOUD_URL .. "?" .. url )
+
+-- card image test
+gfxQuad = MOAIGfxQuad2D.new ()
+gfxQuad:setTexture ( "CardTest.jpg" )
+--gfxQuad:setRect ( -128, -128, 128, 128 )
+gfxQuad:setRect ( -89, -128, 89, 128 )
+gfxQuad:setUVRect ( 0, 1, 1, 0 )
+
+prop = MOAIProp2D.new ()
+prop:setDeck ( gfxQuad )
+layer:insertProp ( prop )
+
+prop:setLoc( 0, 100 )
+--prop:moveRot( 360, 5 )
+--prop:moveLoc( 50, 50, 5 )
