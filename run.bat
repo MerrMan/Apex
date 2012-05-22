@@ -1,0 +1,1 @@
+..\moai-sdk\bin\win32\moai.exe "main.lua"
