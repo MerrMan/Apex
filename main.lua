@@ -1,4 +1,4 @@
-require "input"
+--require "input"
 
 MOAI_CLOUD_URL = "http://services.moaicloud.com/colond/clouddbtutorial"
 
@@ -50,9 +50,9 @@ textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY )
 textbox:setYFlip ( true )
 layer:insertProp ( textbox )
 
-io.write( "Please enter your name:" )
-InputName = io.read()
-print( "Your name is " .. InputName )
+--io.write( "Please enter your name:" )
+--InputName = io.read()
+--print( "Your name is " .. InputName )
 
 function taskCallback( task )
 	print( task:getString() )
@@ -61,23 +61,48 @@ function taskCallback( task )
 	layer:insertProp( textbox )
 end
 
-task = MOAIHttpTask.new()
-task:setCallback( taskCallback )
-url = UrlEncode( { name = InputName } )
-print( url )
-task:httpGet( MOAI_CLOUD_URL .. "?" .. url )
+--task = MOAIHttpTask.new()
+--task:setCallback( taskCallback )
+--url = UrlEncode( { name = InputName } )
+--print( url )
+--task:httpGet( MOAI_CLOUD_URL .. "?" .. url )
 
 -- card image test
 gfxQuad = MOAIGfxQuad2D.new ()
 gfxQuad:setTexture ( "CardTest.jpg" )
 --gfxQuad:setRect ( -128, -128, 128, 128 )
-gfxQuad:setRect ( -89, -128, 89, 128 )
+--gfxQuad:setRect ( -89, -128, 89, 128 )
+gfxQuad:setRect ( 0, 0, 89, 128 )
 gfxQuad:setUVRect ( 0, 1, 1, 0 )
 
 prop = MOAIProp2D.new ()
 prop:setDeck ( gfxQuad )
 layer:insertProp ( prop )
 
-prop:setLoc( 0, 100 )
+--prop:setLoc( 0, 100 )
 --prop:moveRot( 360, 5 )
 --prop:moveLoc( 50, 50, 5 )
+--updateCardPosition( prop, 0, 100 )
+
+function updateCardPosition( prop, x, y )
+    prop:setLoc( x, y )
+end
+
+mainThread = MOAICoroutine.new()
+mainThread.run(
+    function()
+        local frames = 0
+        while true do
+            coroutine.yield()
+            frames = frames + 1
+            if (frames > 90) then
+                frames = 0
+                print('timer went off!')
+            end
+            
+            if (MOAIInputMgr.device.mouseLeft:down()) then
+                print('left mouse is down!')
+            end
+        end
+    end
+)

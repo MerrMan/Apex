@@ -4,7 +4,25 @@
 -- http://getmoai.com
 ----------------------------------------------------------------
 
-MOAISim.openWindow ( "test", 320, 480 )
+InputManager = {}
+InputManager_mt = { __index = InputManager }
+
+-- Singleton creator for the InputManager
+--
+function InputManager:create()
+    local new_inst = {}    -- the new instance
+    setmetatable( new_inst, InputManager_mt ) -- all instances share the same metatable
+    return new_inst
+end
+
+function InputManager:getMousePosX()
+    return 
+end
+
+function InputManager:doSomething()
+    print( "Doing something" )
+end
+
 
 local function printf ( ... )
 	return io.stdout:write ( string.format ( ... ))
