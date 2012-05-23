@@ -1,33 +1,22 @@
 --require "input"
+require "urlEncode"
 
 MOAI_CLOUD_URL = "http://services.moaicloud.com/colond/clouddbtutorial"
 
-MOAISim.openWindow( "Textboxes", 320, 480 )
+--MOAISim.openWindow( "Textboxes", 320, 480 )
+--viewport = MOAIViewport.new()
+--viewport:setSize( 320, 480 )
+--viewport:setScale( 320, -480 )
 
+MOAISim.openWindow( "Textboxes", 480, 320 )
 viewport = MOAIViewport.new()
-viewport:setScale( 320, 480 )
-viewport:setSize( 320, 480 )
+viewport:setSize ( 480, 320 )
+viewport:setScale ( 480, -320 ) -- use negative Y axis
+viewport:setOffset( -1, 1 )
 
 layer = MOAILayer2D.new()
 layer:setViewport( viewport )
 MOAISim.pushRenderPass( layer )
-
-function UrlEscape(s)
-	s = string.gsub(s, "([&=+%c])", function (c)
-    		return string.format("%%%02X", string.byte(c))
-		end)
-	s = string.gsub(s, " ", "+")
-	return s
-end
-
-function UrlEncode( t )
-	local s = ""
-		for k,v in pairs( t ) do
-			s = s .. "&" .. UrlEscape( k ) .. "=" .. UrlEscape( v )
-	end
-
-	return string.sub ( s, 2 ) -- remove first '&'
-end
 
 charcodes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-'
 
@@ -72,15 +61,15 @@ gfxQuad = MOAIGfxQuad2D.new ()
 gfxQuad:setTexture ( "CardTest.jpg" )
 --gfxQuad:setRect ( -128, -128, 128, 128 )
 --gfxQuad:setRect ( -89, -128, 89, 128 )
-gfxQuad:setRect ( 0, 0, 89, 128 )
-gfxQuad:setUVRect ( 0, 1, 1, 0 )
+gfxQuad:setRect ( -45, -64, 45, 64 )
+--gfxQuad:setUVRect ( 0, 1, 1, 0 )
+gfxQuad:setUVRect ( 0, 0, 1, 1 )
 
 prop = MOAIProp2D.new ()
 prop:setDeck ( gfxQuad )
 layer:insertProp ( prop )
 
---prop:setLoc( 0, 100 )
---prop:moveRot( 360, 5 )
+prop:setLoc( 100, 100 )
 --prop:moveLoc( 50, 50, 5 )
 --updateCardPosition( prop, 0, 100 )
 
@@ -91,6 +80,11 @@ end
 mainThread = MOAICoroutine.new()
 mainThread:run(
     function()
+    	
+    	local bGrabbedCard = false
+    	local grabOffsetX = 0
+    	local grabOffsetY = 0
+    	
         local frames = 0
         while true do
             coroutine.yield()
@@ -100,8 +94,30 @@ mainThread:run(
                 print('timer went off!')
             end
             
+            -- grab the card with the left mouse button
             if (MOAIInputMgr.device.mouseLeft:down()) then
-                print('left mouse is down!')
+                local x,y =  MOAIInputMgr.device.pointer:getLoc()
+                if prop:inside(x,y,0) then
+                	bGrabbedCard = true
+                	local propLocX, propLocY = prop:getLoc()
+                	grabOffsetX = propLocX - x
+                	grabOffsetY = propLocY - y
+                end
+            elseif (MOAIInputMgr.device.mouseLeft:isDown() == false) then
+            	bGrabbedCard = false
+            end
+
+			-- spin the card with the right mouse button
+           	if (MOAIInputMgr.device.mouseRight:down()) then
+                local x,y =  MOAIInputMgr.device.pointer:getLoc()
+                if prop:inside(x,y,0) then
+	            	prop:moveRot( 360, 0.75 )
+	            end
+           	end           	
+            
+            if bGrabbedCard then
+                local x,y =  MOAIInputMgr.device.pointer:getLoc()
+                updateCardPosition( prop, x + grabOffsetX, y + grabOffsetY )
             end
         end
     end
