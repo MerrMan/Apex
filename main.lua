@@ -89,7 +89,7 @@ function updateCardPosition( prop, x, y )
 end
 
 mainThread = MOAICoroutine.new()
-mainThread.run(
+mainThread:run(
     function()
         local frames = 0
         while true do
