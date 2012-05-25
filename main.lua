@@ -1,19 +1,38 @@
 --require "input"
 require "urlEncode"
 
+require "elements"
+require "modules/cloud-manager"	
+require "modules/state-manager"	
+require "modules/input-manager"	
+require "modules/savefile-manager"
+
 MOAI_CLOUD_URL = "http://services.moaicloud.com/colond/clouddbtutorial"
 
---MOAISim.openWindow( "Textboxes", 320, 480 )
---viewport = MOAIViewport.new()
---viewport:setSize( 320, 480 )
---viewport:setScale( 320, -480 )
-
-MOAISim.openWindow( "Textboxes", 480, 320 )
+MOAISim.openWindow( "APEX", SCREEN_WIDTH, SCREEN_HEIGHT )
 viewport = MOAIViewport.new()
-viewport:setSize ( 480, 320 )
-viewport:setScale ( 480, -320 ) -- use negative Y axis
+viewport:setSize ( SCREEN_WIDTH, SCREEN_HEIGHT )
+viewport:setScale ( SCREEN_UNITS_X, -SCREEN_UNITS_Y ) -- use negative Y axis
 viewport:setOffset( -1, 1 )
 
+-- seed random numbers
+math.randomseed ( os.time ())
+
+JUMP_TO = nil
+----------------------------------------------------------------
+if 	JUMP_TO	then
+	statemgr.push ( JUMP_TO )
+----------------------------------------------------------------
+else
+	statemgr.push ( "states/state-splash.lua" )	
+end
+----------------------------------------------------------------
+
+-- Start the game!
+statemgr.begin ()
+
+
+--[[
 layer = MOAILayer2D.new()
 layer:setViewport( viewport )
 MOAISim.pushRenderPass( layer )
@@ -122,3 +141,5 @@ mainThread:run(
         end
     end
 )
+
+]]--

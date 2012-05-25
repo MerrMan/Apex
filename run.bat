@@ -1,1 +1,1 @@
-..\moai-sdk\bin\win32\moai.exe "main.lua"
+..\moai-sdk\bin\win32\moai.exe "platforms\platform-windows.lua" "main.lua"
