@@ -64,7 +64,7 @@ splash.onUpdate = function ( self )
 
 	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
 
-		statemgr.push ( "states/state-main-menu.lua" )
+		statemgr.push ( "states/state-menu.lua" )
 	end
 end
 

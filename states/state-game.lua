@@ -8,10 +8,14 @@ local game = {}
 game.layerTable = nil
 
 local mainLayer = nil
-local wolf = nil
+local card = nil
 local textboxClicks = nil
 local textboxClock = nil
 local processing = false
+
+local cardGrabbed = false
+local cardOffsetX = 0
+local cardOffsetY = 0
 
 -- helper function to find the time until the user can click
 game.getTimeLeft = function ()
@@ -53,6 +57,12 @@ game.ClickCloud = function ()
 	processing = false
 	
 end
+
+----------------------------------------------------------------
+game.CardGrab = function( self )
+	print( 'CardGrab!' )
+	cardGrabbed = not cardGrabbed
+end
 ----------------------------------------------------------------
 game.onFocus = function ( self )
 	
@@ -65,15 +75,21 @@ game.onInput = function ( self )
 	-- lock input if client side time check is failing
 	if ( self.getTimeLeft () <= 0 ) then
 	
-		-- send input to the wolf button
+		-- send input to the card button
 		if inputmgr:up () then
 			local x, y = mainLayer:wndToWorld ( inputmgr:getTouch ())
-			wolf:updateClick ( false, x, y )
+			card:updateClick ( false, x, y )
 			
 		elseif inputmgr:down () then
 			local x, y = mainLayer:wndToWorld ( inputmgr:getTouch ())
-			wolf:updateClick ( true, x, y )
+			card:updateClick ( true, x, y )
 		end
+	end
+	
+	if ( cardGrabbed == true ) then
+		local x, y = mainLayer:wndToWorld ( inputmgr:getTouch ())
+		print( x .. ', ' .. y )
+		card.img:setLoc( x, y )
 	end
 end
 
@@ -104,16 +120,14 @@ game.onLoad = function ( self )
 	textboxClock:setLoc ( 0, -100 )
 	textboxClock:setString ( "Time to next click - " .. self.getTimeLeft () )
 	layer:insertProp ( textboxClock )
-	
-	wolf = elements.makeButton ( "resources/wolf.png", 169, 128 )
-	wolf:setCallback ( function ( self )
-	
-		processing = true
-		local thread = MOAIThread.new ()
-		thread:run ( game.ClickCloud )
-		
+
+	card = elements.makeButton( "CardTest.jpg", 90, 128 )
+	card:setCallback( function ( self )
+		local thread = MOAIThread.new()
+		thread:run( game.CardGrab )
 	end )
-	layer:insertProp ( wolf.img )
+	
+	layer:insertProp ( card.img )
 	mainLayer = layer
 	
 end

@@ -10,15 +10,23 @@ require "modules/savefile-manager"
 MOAI_CLOUD_URL = "http://services.moaicloud.com/colond/clouddbtutorial"
 
 MOAISim.openWindow( "APEX", SCREEN_WIDTH, SCREEN_HEIGHT )
-viewport = MOAIViewport.new()
-viewport:setSize ( SCREEN_WIDTH, SCREEN_HEIGHT )
-viewport:setScale ( SCREEN_UNITS_X, -SCREEN_UNITS_Y ) -- use negative Y axis
-viewport:setOffset( -1, 1 )
+--viewport = MOAIViewport.new()
+--viewport:setSize ( SCREEN_WIDTH, SCREEN_HEIGHT )
+--viewport:setScale ( SCREEN_UNITS_X, -SCREEN_UNITS_Y ) -- use negative Y axis
+--viewport:setOffset( -1, 1 )
+
+viewport = MOAIViewport.new ()
+viewport:setSize ( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT )
+viewport:setScale ( SCREEN_UNITS_X, SCREEN_UNITS_Y )
+
 
 -- seed random numbers
 math.randomseed ( os.time ())
 
-JUMP_TO = nil
+savefiles.get ( "user" )
+globalData = {}
+
+JUMP_TO = "states/state-menu.lua"
 ----------------------------------------------------------------
 if 	JUMP_TO	then
 	statemgr.push ( JUMP_TO )

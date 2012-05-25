@@ -18,7 +18,8 @@ mainMenu.StartGameCloud = function ( isNewGame )
 	local task
 	local result
 	local code
-		
+	
+	--[[	
 	--create a new user on the cloud if its a new game
 	if isNewGame then
 		task = cloud.createPostTask ( "users", { name = "Adam" } )
@@ -46,6 +47,11 @@ mainMenu.StartGameCloud = function ( isNewGame )
 	else
 		print ( "failed to get user , code" .. code  )
 	end 
+	]]--
+	
+	globalData.currentTime = os.time ()
+	globalData.timeToClick = 0 --result.timeToClick
+	globalData.clicks = 23 --result.clicks
 	
 	statemgr.push ( "states/state-game.lua" )
 	
@@ -63,13 +69,13 @@ mainMenu.onInput = function ( self )
 		
 		local x, y = mainLayer:wndToWorld ( inputmgr:getTouch ())
 		
-		playButton:updateClick ( false, x, y )
+		startButton:updateClick ( false, x, y )
 		
 	elseif inputmgr:down () then
 		
 		local x, y = mainLayer:wndToWorld ( inputmgr:getTouch ())
 		
-		playButton:updateClick ( true, x, y )
+		startButton:updateClick ( true, x, y )
 	end
 
 end
@@ -94,9 +100,9 @@ mainMenu.onLoad = function ( self )
 	textbox[1]:setString ( "Wolf Clicker 1.0" )
 	layer:insertProp ( textbox[1] )
 	
-	playButton = elements.makeTextButton ( font, "resources/button.png", 206, 150, 60 )
+	startButton = elements.makeTextButton ( font, "resources/button.png", 206, 150, 60 )
 	
-	playButton:setCallback ( function ( self )
+	startButton:setCallback ( function ( self )
 		
 		local thread = MOAIThread.new ()
 		thread:run ( mainMenu.StartGameCloud, mainMenu.newGame )
@@ -104,15 +110,15 @@ mainMenu.onLoad = function ( self )
 	end )
 	
 	if savefiles.get ( "user" ).fileexist then
-		playButton:setString ( "Continue" )
-		playButton.newGame = false
+		startButton:setString ( "Continue" )
+		startButton.newGame = false
 	else
-		playButton:setString ( "New Game" )
-		playButton.newGame = true
+		startButton:setString ( "New Game" )
+		startButton.newGame = true
 	end
 	
-	layer:insertProp ( playButton.img )
-	layer:insertProp ( playButton.txt )
+	layer:insertProp ( startButton.img )
+	layer:insertProp ( startButton.txt )
 	
 	mainLayer = layer
 	
