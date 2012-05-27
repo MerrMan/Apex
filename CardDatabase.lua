@@ -6,6 +6,7 @@ CardDatabase["Minion"] =
 {
 	artName = "CardImages/Memnite.jpg",
 	resourceAmount = 1,
+	resourceCost = 1,
 	power = 2,
 	toughness = 3
 }
@@ -14,6 +15,7 @@ CardDatabase["Bear"] =
 {
 	artName = "CardImages/GrizzlyBears.jpg",
 	resourceAmount = -1,
+	resourceCost = 2,
 	power = 2,
 	toughness = 2
 }
@@ -22,24 +24,27 @@ CardDatabase["Giant"] =
 {
 	artName = "CardImages/HillGiant.jpg",
 	resourceAmount = 1,
-	power = 2,
-	toughness = 2
+	resourceCost = 3,
+	power = 3,
+	toughness = 3
 }
 
 CardDatabase["Fighter"] =
 {
 	artName = "CardImages/SadisticAugermage.jpg",
 	resourceAmount = 1,
-	power = 2,
-	toughness = 2
+	resourceCost = 2,
+	power = 3,
+	toughness = 1
 }
 
 CardDatabase["Turtle"] =
 {
 	artName = "CardImages/HornedTurtle.jpg",
 	resourceAmount = 1,
-	power = 2,
-	toughness = 2
+	resourceCost = 3,
+	power = 1,
+	toughness = 4
 }
 
 CardDatabase["Warhorse"] =
@@ -89,6 +94,7 @@ function CreateCard( cardName )
 	local card = { }
 	card.artName = cardDBentry.artName
 	card.resourceAmount = cardDBentry.resourceAmount
+	card.resourceCost = cardDBentry.resourceCost
 	card.power = cardDBentry.power
 	card.toughness = cardDBentry.toughness
 		

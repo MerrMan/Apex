@@ -55,6 +55,14 @@ function makeButton ( texture, w, h )
 	return button
 end
 
+
+function makeTextButtonAtLocation ( font, texture, w, h, textY, x, y )
+	local textButton = makeTextButton ( font, texture, w, h, textY )
+	textButton.img:setLoc(x,y)
+	textButton.txt:setLoc(x,y-textY)
+	return textButton	
+end
+
 function makeTextButton ( font, texture, w, h, textY )
 
 	-- make a basic button
