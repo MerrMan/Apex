@@ -19,7 +19,6 @@ viewport = MOAIViewport.new ()
 viewport:setSize ( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT )
 viewport:setScale ( SCREEN_UNITS_X, SCREEN_UNITS_Y )
 
-
 -- seed random numbers
 math.randomseed ( os.time ())
 

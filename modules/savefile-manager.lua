@@ -18,6 +18,7 @@ local saveFiles = {}
 function get ( filename )
 
 	if not saveFiles [ filename ] then
+		print("making save file: " .. filename)
 		saveFiles [ filename ] = makeSaveFile ( filename ) 
 		saveFiles [ filename ]:loadGame ()
 	end	
@@ -43,15 +44,18 @@ function makeSaveFile ( filename )
 		local workingDir
 		
 		if DEVICE then
+			print("DEVICE is true!")
 			workingDir = MOAIFileSystem.getWorkingDirectory ()
 			MOAIFileSystem.setWorkingDirectory ( MOAIEnvironment.documentDirectory )
 		end
 		
 		if MOAIFileSystem.checkFileExists ( fullFileName ) then
+			print("File exists!")
 			local file = io.open ( fullFileName, 'rb' )
 			savefile.data = dofile ( fullFileName )
 			self.fileexist = true
 		else
+			print("File does NOT exist!")
 			savefile.data = {}
 			self.fileexist = false
 		end

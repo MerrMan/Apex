@@ -301,13 +301,8 @@ end
 
 ----------------------------------------------------------------
 function SendCardToDeployZoneLoc( card )
-	local cardIndex = 0
-	for k, v in ipairs(deployZone) do
-		if v == card then
-			cardIndex = k
-		end
-	end
-	
+	local cardIndex = GetCardIndexInTable( card, deployZone )
+		
 	local destX, destY = GetCardDeployZoneLoc(cardIndex)
 	print( "Sending Card to Deploy Zone - Card index: " .. cardIndex .. ", x = " .. destX .. ", y = " .. destY )
 
@@ -384,12 +379,15 @@ game.onLoad = function ( self )
 		card.cardArea = CARD_AREA.HAND
 	end
 	
-	-- lay out the global cards
-	
-	
 	ArrangeHand()
+	
+	SerializeTest()
 end
 
+----------------------------------------------
+function SerializeTest()
+	
+end
 
 ----------------------------------------------
 function InitializeDiscardZone()
@@ -402,6 +400,8 @@ function InitializeDiscardZone()
 	discardProp:setLoc( DISCARD_LOCATION_X, DISCARD_LOCATION_Y )
 	
 	mainLayer:insertProp( discardProp )
+	
+	CreateAndAttachTextBox( discardProp )
 end
 
 ----------------------------------------------
@@ -415,6 +415,8 @@ function InitializePlayerDeckZone()
 	playerDeckProp:setLoc( PLAYER_DECK_LOCATION_X, PLAYER_DECK_LOCATION_Y )
 	
 	mainLayer:insertProp( playerDeckProp )
+	
+	CreateAndAttachTextBox( playerDeckProp )
 end
 
 ----------------------------------------------
@@ -426,8 +428,31 @@ function InitializeGlobalDeckZone()
 	globalDeckProp = MOAIProp2D.new()
 	globalDeckProp:setDeck( globalDeckArt )
 	globalDeckProp:setLoc( GLOBAL_DECK_LOCATION_X, GLOBAL_DECK_LOCATION_Y )
-	
+
 	mainLayer:insertProp( globalDeckProp )
+	
+	CreateAndAttachTextBox( globalDeckProp )
+end
+
+---------------------------------------------
+function CreateAndAttachTextBox( prop )
+	-- card counter	
+	local font =  MOAIFont.new ()
+	font:loadFromTTF ( "arialbd.ttf", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.?! ", 12, 163 )
+	
+	textbox = MOAITextBox.new ()
+	textbox:setFont( font )
+	textbox:setColor( 0, 0, 0, 1 )
+	textbox:setAlignment( MOAITextBox.CENTER_JUSTIFY )
+	textbox:setYFlip( true )
+	textbox:setRect( -45, -64, 45, 64 )
+	textbox:setLoc( 0, -50 )
+	textbox:setString( "" )
+	textbox:setParent( prop )
+	
+	prop.textbox = textbox
+
+	mainLayer:insertProp( textbox )
 end
 
 ---------------------------------------------
@@ -592,19 +617,27 @@ function DrawCardFromDeck( fromDeck, toLocation, toIndex, discardPile, deckLocX,
 
 	table.remove( fromDeck, 1 )
 	
+	CreateCardVisuals( cardToDraw )
+	cardToDraw.prop:setLoc( deckLocX, deckLocY )
+	
+	print("POST DRAW! num cards in deck = " .. #fromDeck)
+	
+	return cardToDraw
+end
+
+
+function CreateCardVisuals( card )
 	-- when we draw the card, we want to create the visual element to go along with it
 	-- this will be destroyed when the card is discarded from play
-	cardToDraw.prop = MOAIProp2D.new()
-	if ( cardToDraw.artName == nil ) then
+	card.prop = MOAIProp2D.new()
+	if ( card.artName == nil ) then
 		print( "IVALID art name for card!" )
 	else
-		print( "Going to get the art for :" .. cardToDraw.artName )
+		print( "Going to get the art for :" .. card.artName )
 	end
-	local cardGfx = CardDatabase.GetCardArt( cardToDraw.artName )
-	cardToDraw.prop:setDeck( cardGfx )
+	local cardGfx = CardDatabase.GetCardArt( card.artName )
+	card.prop:setDeck( cardGfx )
 	
-	cardToDraw.prop:setLoc( deckLocX, deckLocY )
-
 	-- put a text box on the card
 	local font =  MOAIFont.new ()
 	font:loadFromTTF ( "arialbd.ttf", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.?! ", 12, 163 )
@@ -622,6 +655,7 @@ function DrawCardFromDeck( fromDeck, toLocation, toIndex, discardPile, deckLocX,
 	local x2 = CardDatabase.CARD_WIDTH*CARD_TEXTBOX_RECT_RATIO_X_2 - (CardDatabase.CARD_WIDTH/2)
 	local y2 = -(CardDatabase.CARD_HEIGHT*CARD_TEXTBOX_RECT_RATIO_Y_2 - (CardDatabase.CARD_HEIGHT/2))
 	
+	-- HACK
 	y1 = 0
 	y2 = -30
 	
@@ -631,20 +665,16 @@ function DrawCardFromDeck( fromDeck, toLocation, toIndex, discardPile, deckLocX,
 	print( y2 )
 	textbox:setRect ( x1, y1, x2, y2 )
 	
-	textbox:setLoc ( 0, 10 )
-	textbox:setString ( cardToDraw.cardText )
+	textbox:setLoc ( 0, 10 )	-- HACK
+	textbox:setString ( card.cardText )
 
 	-- attach the text box to the card prop so that they will move together
-	textbox:setParent( cardToDraw.prop )
+	textbox:setParent( card.prop )
 		
-	cardToDraw.textbox = textbox
+	card.textbox = textbox
 	
-	mainLayer:insertProp( cardToDraw.prop )
-	mainLayer:insertProp( cardToDraw.textbox )
-	
-	print("POST DRAW! num cards in deck = " .. #fromDeck)
-	
-	return cardToDraw
+	mainLayer:insertProp( card.prop )
+	mainLayer:insertProp( card.textbox )
 end
 
 -- attempt to discard the given card from the player's hand
@@ -953,6 +983,9 @@ end
 
 ----------------------------------------------------------------
 game.onUpdate = function ( self )
+	globalDeckProp.textbox:setString( "" .. #globalDeck )
+	playerDeckProp.textbox:setString( "" .. #playerDeck )
+	discardProp.textbox:setString( "" .. #discard )
 
 	textboxResources:setString ( "Resources - " .. currentResources )
 	textboxClock:setString ( "Time to next click - " .. self.getTimeLeft () )
@@ -968,6 +1001,7 @@ function DumpCardTable( cardTable )
 end
 
 function Yield( frames )
+	game:onUpdate()	-- make sure that we're still updating all of our numbers during the yields!
 	for i=1, frames do coroutine.yield() end	
 end
 
