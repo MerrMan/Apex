@@ -1,6 +1,9 @@
 
 module ( "CardDatabase", package.seeall )
 
+CARD_WIDTH							= 90
+CARD_HEIGHT							= 128
+
 local CardDatabase = { }
 CardDatabase["Minion"] =
 {
@@ -8,7 +11,9 @@ CardDatabase["Minion"] =
 	resourceAmount = 1,
 	resourceCost = 1,
 	power = 2,
-	toughness = 3
+	toughness = 3,
+	drawCards = 0,
+	cardText = "Discard: Gain 1"
 }
 
 CardDatabase["Bear"] =
@@ -17,7 +22,9 @@ CardDatabase["Bear"] =
 	resourceAmount = -1,
 	resourceCost = 2,
 	power = 2,
-	toughness = 2
+	toughness = 2,
+	drawCards = 0,
+	cardText = ""
 }
 
 CardDatabase["Giant"] =
@@ -26,7 +33,9 @@ CardDatabase["Giant"] =
 	resourceAmount = 1,
 	resourceCost = 3,
 	power = 3,
-	toughness = 3
+	toughness = 3,
+	drawCards = 0,
+	cardText = "Discard: Gain 1"
 }
 
 CardDatabase["Fighter"] =
@@ -35,24 +44,31 @@ CardDatabase["Fighter"] =
 	resourceAmount = 1,
 	resourceCost = 2,
 	power = 3,
-	toughness = 1
+	toughness = 1,
+	drawCards = 1,
+	cardText = "Discard: Gain 1 and Draw a Card"
 }
 
 CardDatabase["Turtle"] =
 {
 	artName = "CardImages/HornedTurtle.jpg",
-	resourceAmount = 1,
+	resourceAmount = 2,
 	resourceCost = 3,
 	power = 1,
-	toughness = 4
+	toughness = 4,
+	drawCards = 0,
+	cardText = "Discard: Gain 2"
 }
 
 CardDatabase["Warhorse"] =
 {
 	artName = "CardImages/ArmoredWarhorse.jpg",
-	resourceAmount = 1,
+	resourceAmount = 3,
+	resourceCost = 2,
 	power = 2,
-	toughness = 2
+	toughness = 2,
+	drawCards = 0,
+	cardText = "Discard: Gain 3"
 }
 
 
@@ -73,7 +89,7 @@ function GetCardArt( artName )
 		
 		local cardArt = MOAIGfxQuad2D.new()
 		cardArt:setTexture ( artName )
-		cardArt:setRect( -45, -64, 45, 64 )
+		cardArt:setRect( -(CARD_WIDTH/2), -(CARD_HEIGHT/2), CARD_WIDTH/2, CARD_HEIGHT/2 )
 		
 		CardArtDatabase[ artName ] = cardArt
 		return CardArtDatabase[ artName ]
@@ -97,6 +113,10 @@ function CreateCard( cardName )
 	card.resourceCost = cardDBentry.resourceCost
 	card.power = cardDBentry.power
 	card.toughness = cardDBentry.toughness
+	card.drawCards = cardDBentry.drawCards
+	card.cardText = cardDBentry.cardText
+	
+	
 	card.deployedThisTurn = false
 		
 	return card
