@@ -97,6 +97,7 @@ function CreateCard( cardName )
 	card.resourceCost = cardDBentry.resourceCost
 	card.power = cardDBentry.power
 	card.toughness = cardDBentry.toughness
+	card.deployedThisTurn = false
 		
 	return card
 end
